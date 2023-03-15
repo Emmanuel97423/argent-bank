@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState } from 'react';
+import React from 'react';
 import { Routes, Route, Outlet, Link } from 'react-router-dom';
 import Signin from './pages/Signin';
 import Profile from './pages/Profile';

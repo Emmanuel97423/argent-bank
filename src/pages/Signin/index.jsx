@@ -1,6 +1,11 @@
 import React from 'react';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useFetchAuthMutation } from '../../features/auth/auth-api-slice';
 
 export default function Signin() {
+  const dispatch = useAppDispatch();
+  const { data = [], isFetching } = useFetchAuthMutation('hello');
+  console.log('isFetching:', isFetching);
   return (
     <main className="main bg-dark">
       <section className="sign-in-content">
