@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useFetchAuthMutation } from '../../features/auth/auth-api-slice';
 
 export default function Signin() {
