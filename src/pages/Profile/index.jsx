@@ -1,18 +1,25 @@
 import React, { useEffect } from 'react';
 import { loadState } from '../../utils/localStorage';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchProfile } from '../../features/profile/profileSlice';
 
 export default function Profile() {
-  loadState();
+  // loadState();
   const localStorageState = JSON.parse(localStorage.getItem('state'));
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (localStorageState === null) {
       navigate('/sign-in');
     } else if (localStorageState) {
       const token = localStorageState.body.token;
-      console.log('token:', token);
+      // console.log('token:', token);
+      dispatch(fetchProfile(token)).then((profile) => {
+        console.log('profile:', profile);
+      });
     }
   }, []);
 

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { HttpClient } from '../../service/httpService';
 import { saveState } from '../../utils/localStorage';
 
 const initialState = {
@@ -8,19 +8,30 @@ const initialState = {
   error: null
 };
 
-const authUserMock = '';
-
 export const fetchLogin = createAsyncThunk(
   'auth/fetchLogin',
   async (credentials) => {
-    try {
-      const response = await axios.post(
-        'http://localhost:3001/api/v1/user/login',
-        credentials
-      );
+    const client = new HttpClient(credentials);
 
+    try {
+      const response = await client.getLogin();
       return response.data;
     } catch (error) {
+      // console.log('error:', error);
+      return error.response.data;
+    }
+  }
+);
+
+export const fetchSignin = createAsyncThunk(
+  'auth/fetchSignin',
+  async (credentials) => {
+    const client = new HttpClient(credentials);
+    try {
+      const response = await client.getSignup(credentials);
+      return response.data;
+    } catch (error) {
+      // console.log('error:', error);
       return error.response.data;
     }
   }
@@ -42,6 +53,11 @@ const authSlice = createSlice({
     builder.addCase(fetchLogin.rejected, (state, action) => {
       state.status = 'Rejected';
       state.error = action.error.message;
+    });
+
+    builder.addCase(fetchSignin.fulfilled, (state, action) => {
+      console.log('action:', action);
+      return action.payload;
     });
   }
 });

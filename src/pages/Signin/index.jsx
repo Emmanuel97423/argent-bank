@@ -34,17 +34,22 @@ export default function Signin() {
         email: username,
         password: password
       };
-      dispatch(fetchLogin(loginData)).then((response) => {
-        const payload = response.payload;
-        if (payload.status !== 200) {
-          setErrorMessage(payload.message);
-          setTimeout(() => {
-            setErrorMessage('');
-          }, 5000);
-          return;
-        }
-        navigate('/profile');
-      });
+
+      dispatch(fetchLogin(loginData))
+        .then((response) => {
+          const payload = response.payload;
+          if (payload.status !== 200) {
+            setErrorMessage(payload.message);
+            setTimeout(() => {
+              setErrorMessage('');
+            }, 5000);
+            return;
+          }
+          navigate('/profile');
+        })
+        .catch((err) => {
+          console.log('err:', err);
+        });
     }
   };
 
