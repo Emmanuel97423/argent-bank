@@ -1,6 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { loadState } from '../../utils/localStorage';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
+  loadState();
+  const localStorageState = JSON.parse(localStorage.getItem('state'));
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorageState === null) {
+      navigate('/sign-in');
+    } else if (localStorageState) {
+      const token = localStorageState.body.token;
+      console.log('token:', token);
+    }
+  }, []);
+
   return (
     <>
       <main className="main bg-dark">

@@ -1,28 +1,30 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { saveState } from '../../utils/localStorage';
 
 const initialState = {
-  user: {},
+  message: null,
   status: 'idle',
   error: null
 };
 
-const authUserMock = {
-  email: 'tony@stark.com',
-  password: 'password123'
-};
+const authUserMock = '';
 
-export const fetchLogin = createAsyncThunk('auth/fetchLogin', async () => {
-  try {
-    const response = await axios.post(
-      'https://argent-bank-api-production.up.railway.app/api/v1/user/login',
-      authUserMock
-    );
-    return response.data;
-  } catch (error) {
-    console.log('error:', error);
+export const fetchLogin = createAsyncThunk(
+  'auth/fetchLogin',
+  async (credentials) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:3001/api/v1/user/login',
+        credentials
+      );
+
+      return response.data;
+    } catch (error) {
+      return error.response.data;
+    }
   }
-});
+);
 
 const authSlice = createSlice({
   name: 'auth',
@@ -34,6 +36,7 @@ const authSlice = createSlice({
       state.status = 'Loading';
     });
     builder.addCase(fetchLogin.fulfilled, (state, action) => {
+      saveState(action.payload);
       return action.payload;
     });
     builder.addCase(fetchLogin.rejected, (state, action) => {
