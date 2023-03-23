@@ -1,6 +1,6 @@
-export const loadState = () => {
+export const loadState = (stateItem) => {
   try {
-    const serializedState = localStorage.getItem('state');
+    const serializedState = localStorage.getItem(stateItem);
     if (serializedState === null) {
       return undefined;
     }
@@ -10,13 +10,39 @@ export const loadState = () => {
   }
 };
 
-export const saveState = (state) => {
+export const saveState = (state, storageItem, payload) => {
   if (state.status !== 200) {
     return;
   }
   try {
     const serializedState = JSON.stringify(state);
-    localStorage.setItem('state', serializedState);
+    localStorage.setItem(storageItem, serializedState);
+  } catch {
+    // ignore write errors
+  }
+};
+
+export const saveToken = (state, storageItem, payload) => {
+  const token = payload;
+  // if (payload.status !== 200) {
+  //   return;
+  // }
+  try {
+    const serializedState = JSON.stringify(token);
+    localStorage.setItem(storageItem, serializedState);
+  } catch {
+    // ignore write errors
+  }
+};
+
+export const saveUserState = (state, storageItem, payload) => {
+  // const user = payload.body.token;
+  // if (payload.status !== 200) {
+  //   return;
+  // }
+  try {
+    const serializedState = JSON.stringify(payload);
+    localStorage.setItem(storageItem, serializedState);
   } catch {
     // ignore write errors
   }

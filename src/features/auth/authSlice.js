@@ -1,12 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+// import { fetchProfile } from '../profile/profileSlice';
 import { HttpClient } from '../../service/httpService';
-import { saveState } from '../../utils/localStorage';
+import { saveState, saveToken, saveUserState } from '../../utils/localStorage';
 
-const initialState = {
-  message: null,
-  status: 'idle',
-  error: null
-};
+const initialState = [];
 
 export const fetchLogin = createAsyncThunk(
   'auth/fetchLogin',
@@ -17,7 +14,6 @@ export const fetchLogin = createAsyncThunk(
       const response = await client.getLogin();
       return response.data;
     } catch (error) {
-      // console.log('error:', error);
       return error.response.data;
     }
   }
@@ -37,26 +33,42 @@ export const fetchSignin = createAsyncThunk(
   }
 );
 
+export const fetchProfile = createAsyncThunk(
+  'auth/fetchProfile',
+  async (token) => {
+    const client = new HttpClient(token);
+
+    try {
+      const response = await client.getProfile();
+
+      return response.data;
+    } catch (error) {
+      console.log('error:', error);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {},
 
   extraReducers: (builder) => {
-    builder.addCase(fetchLogin.pending, (state, action) => {
-      state.status = 'Loading';
-    });
     builder.addCase(fetchLogin.fulfilled, (state, action) => {
-      saveState(action.payload);
+      const status = action.payload.status;
+      if (status === 200) {
+        const token = action.payload.body.token;
+        saveToken(state, 'token', token);
+      }
+
       return action.payload;
     });
-    builder.addCase(fetchLogin.rejected, (state, action) => {
-      state.status = 'Rejected';
-      state.error = action.error.message;
+    builder.addCase(fetchProfile.fulfilled, (state, action) => {
+      const profile = action.payload.body;
+      saveUserState(state, 'user', profile);
     });
 
     builder.addCase(fetchSignin.fulfilled, (state, action) => {
-      console.log('action:', action);
       return action.payload;
     });
   }

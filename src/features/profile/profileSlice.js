@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { HttpClient } from '../../service/httpService';
+import { saveUserState } from '../../utils/localStorage';
 
-const initialState = {};
+const initialState = [];
 
 export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
@@ -10,7 +11,6 @@ export const fetchProfile = createAsyncThunk(
 
     try {
       const response = await client.getProfile();
-      console.log('response:', response.data);
 
       return response.data;
     } catch (error) {
@@ -25,9 +25,12 @@ const profileSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchProfile.fulfilled, (state, action) => {
+      saveUserState(state, 'user', action.payload);
       return action.payload;
     });
   }
 });
 
 export default profileSlice.reducer;
+
+export const selectedProfile = (state) => state.profile.body;

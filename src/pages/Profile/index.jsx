@@ -1,24 +1,40 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loadState } from '../../utils/localStorage';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchProfile } from '../../features/profile/profileSlice';
+import { fetchProfile } from '../../features/auth/authSlice';
 
 export default function Profile() {
-  // loadState();
-  const localStorageState = JSON.parse(localStorage.getItem('state'));
-  const navigate = useNavigate();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
+  // const profile = useSelector(selectedProfile);
+  // const token = useSelector((state) => state.auth.body.token);
+
+  const profileStatus = useSelector((state) => state.auth.status);
+
+  // loadState();
+
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // const authStatus = useSelector((state) => state.auth.status);
+  // console.log('authStatus:', authStatus);
+
+  // const profileState = useSelector((state) => state.profile.body);
+  // const profileStatus = useSelector((state) => state.profile.status);
+  // const profileMessage = useSelector((state) => state.profile.message);
+
   useEffect(() => {
-    if (localStorageState === null) {
+    const localStorageStateToken = JSON.parse(localStorage.getItem('token'));
+
+    if (localStorageStateToken === null) {
       navigate('/sign-in');
-    } else if (localStorageState) {
-      const token = localStorageState.body.token;
-      // console.log('token:', token);
-      dispatch(fetchProfile(token)).then((profile) => {
-        console.log('profile:', profile);
+    } else if (localStorageStateToken) {
+      dispatch(fetchProfile(localStorageStateToken)).then((response) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        setFirstName(user.firstName);
+        setLastName(user.lastName);
       });
     }
   }, []);
@@ -30,7 +46,7 @@ export default function Profile() {
           <h1>
             Welcome back
             <br />
-            Tony Jarvis!
+            {firstName} {lastName} !
           </h1>
           <button className="edit-button">Edit Name</button>
         </div>
