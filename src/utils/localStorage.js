@@ -10,6 +10,17 @@ export const loadState = (stateItem) => {
   }
 };
 
+export const deleteState = (storageItem) => {
+  // if (state.status !== 200) {
+  //   return;
+  // }
+  try {
+    localStorage.removeItem(storageItem);
+  } catch {
+    // ignore write errors
+  }
+};
+
 export const saveState = (state, storageItem, payload) => {
   if (state.status !== 200) {
     return;
@@ -35,7 +46,7 @@ export const saveToken = (state, storageItem, payload) => {
   }
 };
 
-export const saveUserState = (state, storageItem, payload) => {
+export const saveUserState = (storageItem, payload) => {
   // const user = payload.body.token;
   // if (payload.status !== 200) {
   //   return;

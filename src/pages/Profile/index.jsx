@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { loadState } from '../../utils/localStorage';
+import { saveUserState } from '../../utils/localStorage';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchProfile } from '../../features/auth/authSlice';
+import { fetchProfile } from '../../features/profile/profileSlice';
 
 export default function Profile() {
   const [firstName, setFirstName] = useState('');
@@ -11,7 +11,9 @@ export default function Profile() {
   // const profile = useSelector(selectedProfile);
   // const token = useSelector((state) => state.auth.body.token);
 
-  const profileStatus = useSelector((state) => state.auth.status);
+  // const profileStatus = useSelector((state) => state.auth.status);
+  const token = useSelector((state) => state.auth.token);
+  const profile = useSelector((state) => state.profile);
 
   // loadState();
 
@@ -26,16 +28,33 @@ export default function Profile() {
   // const profileMessage = useSelector((state) => state.profile.message);
 
   useEffect(() => {
-    const localStorageStateToken = JSON.parse(localStorage.getItem('token'));
+    // const localStorageStateToken = JSON.parse(localStorage.getItem('token'));
 
-    if (localStorageStateToken === null) {
+    if (!token) {
       navigate('/sign-in');
-    } else if (localStorageStateToken) {
-      dispatch(fetchProfile(localStorageStateToken)).then((response) => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        setFirstName(user.firstName);
-        setLastName(user.lastName);
-      });
+    } else if (token) {
+      dispatch(fetchProfile(token))
+        .then((response) => {
+          console.log('response:', response);
+        })
+        .catch((error) => {
+          console.log('error:', error);
+        });
+      const isLoggedIn = profile.isLoggedIn;
+      if (isLoggedIn) {
+        setFirstName(profile.profile.firstName);
+        setLastName(profile.profile.lastName);
+      }
+      // const profile = useSelector((state) => state.profile);
+      // console.log('profile:', profile);
+      // .then((response) => {
+      //   console.log('response:', response);
+      //   const profileResponse = response.payload.body;
+      //   // const user = JSON.parse(localStorage.getItem('user'));
+      //   // saveUserState('isLogged', true);
+      //   setFirstName(profileResponse.firstName);
+      //   setLastName(profileResponse.lastName);
+      // });
     }
   }, []);
 

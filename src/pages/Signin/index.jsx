@@ -1,57 +1,38 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchLogin } from '../../features/auth/authSlice';
+import { setCredentials, fetchLogin } from '../../features/auth/authSlice';
+import { useFetchLoginMutation } from '../../features/api/apiSlice';
 
 // import { useAppDispatch, useAppSelector } from '../../store/hooks';
 // import { useFetchAuthMutation } from '../../features/auth/auth-api-slice';
 
 export default function Signin() {
-  // const dispatch = useAppDispatch();
-  // const { data = [], isFetching } = useFetchAuthMutation('hello');
-  // console.log('isFetching:', isFetching);
-
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loginData, setLoginData] = useState({
+    username: '',
+    password: ''
+  });
+  const loginSubmitted = async () => {
+    if (canSave) {
+      const [fetchLogin, { isLoading }] = useFetchLoginMutation();
+    }
+  };
 
   const userNameOnChange = (e) => {
-    setUsername(e.target.value);
+    // setUsername(e.target.value);
+    setLoginData({ ...loginData, username: e.target.value });
   };
 
   const passwordOnChange = (e) => {
-    setPassword(e.target.value);
+    // setPassword(e.target.value);
+    setLoginData({ ...loginData, password: e.target.value });
   };
 
-  const canSave = [username, password].every(Boolean);
+  const canSave = [loginData.username, loginData.password].every(Boolean);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const loginSubmitted = () => {
-    if (canSave) {
-      const loginData = {
-        email: username,
-        password: password
-      };
-
-      dispatch(fetchLogin(loginData))
-        .then((response) => {
-          const payload = response.payload;
-          if (payload.status !== 200) {
-            setErrorMessage(payload.message);
-            setTimeout(() => {
-              setErrorMessage('');
-            }, 5000);
-            return;
-          }
-          navigate('/profile');
-        })
-        .catch((err) => {
-          console.log('err:', err);
-        });
-    }
-  };
 
   return (
     <main className="main bg-dark">
