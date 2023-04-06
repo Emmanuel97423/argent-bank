@@ -11,9 +11,6 @@ export const loadState = (stateItem) => {
 };
 
 export const deleteState = (storageItem) => {
-  // if (state.status !== 200) {
-  //   return;
-  // }
   try {
     localStorage.removeItem(storageItem);
   } catch {
@@ -21,39 +18,10 @@ export const deleteState = (storageItem) => {
   }
 };
 
-export const saveState = (state, storageItem, payload) => {
-  if (state.status !== 200) {
-    return;
-  }
+export const saveState = (state) => {
   try {
     const serializedState = JSON.stringify(state);
-    localStorage.setItem(storageItem, serializedState);
-  } catch {
-    // ignore write errors
-  }
-};
-
-export const saveToken = (state, storageItem, payload) => {
-  const token = payload;
-  // if (payload.status !== 200) {
-  //   return;
-  // }
-  try {
-    const serializedState = JSON.stringify(token);
-    localStorage.setItem(storageItem, serializedState);
-  } catch {
-    // ignore write errors
-  }
-};
-
-export const saveUserState = (storageItem, payload) => {
-  // const user = payload.body.token;
-  // if (payload.status !== 200) {
-  //   return;
-  // }
-  try {
-    const serializedState = JSON.stringify(payload);
-    localStorage.setItem(storageItem, serializedState);
+    localStorage.setItem('auth', serializedState);
   } catch {
     // ignore write errors
   }

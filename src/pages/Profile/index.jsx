@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { saveUserState } from '../../utils/localStorage';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchProfile } from '../../features/profile/profileSlice';
 import { useFetchUserMutation } from '../../features/api/apiSlice';
+import { setUser } from '../../features/auth/authSlice';
 
 export default function Profile() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
   const token = useSelector((state) => state.auth.token);
-  console.log('token:', token);
-  const profile = useSelector((state) => state.profile);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -20,11 +17,17 @@ export default function Profile() {
   useEffect(() => {
     try {
       if (token) {
-        const user = async () => {
-          const user = await fetchUser().unwrap();
-          console.log('user:', user);
+        const user = async (tokenParam) => {
+          const response = await fetchUser(tokenParam).unwrap();
+          if (response.status === 200) {
+            const user = response.body;
+            dispatch(setUser(user));
+            setFirstName(user.firstName);
+            setLastName(user.lastName);
+          }
+          return fetchUser;
         };
-        user();
+        user(token);
       } else {
         navigate('/sign-in');
       }
@@ -32,24 +35,6 @@ export default function Profile() {
       console.log('error:', error);
     }
   }, []);
-  // useEffect(() => {
-  //   if (!token) {
-  //     navigate('/sign-in');
-  //   } else if (token) {
-  //     dispatch(fetchProfile(token))
-  //       .then((response) => {
-  //         console.log('response:', response);
-  //       })
-  //       .catch((error) => {
-  //         console.log('error:', error);
-  //       });
-  //     const isLoggedIn = profile.isLoggedIn;
-  //     if (isLoggedIn) {
-  //       setFirstName(profile.profile.firstName);
-  //       setLastName(profile.profile.lastName);
-  //     }
-  //   }
-  // }, []);
 
   return (
     <>
