@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-// import { setCredentials, fetchLogin } from '../../features/auth/authSlice';
+import { useDispatch } from 'react-redux';
 import { useFetchLoginMutation } from '../../features/api/apiSlice';
 import { setToken } from '../../features/auth/authSlice';
-// import { useAppDispatch, useAppSelector } from '../../store/hooks';
-// import { useFetchAuthMutation } from '../../features/auth/auth-api-slice';
 
 export default function Signin() {
   const [fetchLogin, { data, status, isLoading, isError }] =
@@ -16,12 +13,9 @@ export default function Signin() {
     email: '',
     password: ''
   });
-  const [tokenComponentState, setTokenComponentState] = useState();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const tokenAuthState = useSelector((state) => state.auth.token);
 
   const loginSubmitted = async () => {
     try {
@@ -29,14 +23,8 @@ export default function Signin() {
         const response = await fetchLogin(loginData).unwrap();
         if (response.status === 200) {
           const token = response.body.token;
-          console.log('token:', token);
           dispatch(setToken(token));
-          setTokenComponentState(token);
-          if (tokenAuthState) {
-            console.log('tokenAuthState:', tokenAuthState);
-            navigate('/profile');
-          }
-          // navigate('/profile');
+          navigate('/profile');
         }
       }
     } catch (error) {
@@ -50,12 +38,10 @@ export default function Signin() {
   };
 
   const userNameOnChange = (e) => {
-    // setUsername(e.target.value);
     setLoginData({ ...loginData, email: e.target.value });
   };
 
   const passwordOnChange = (e) => {
-    // setPassword(e.target.value);
     setLoginData({ ...loginData, password: e.target.value });
   };
 

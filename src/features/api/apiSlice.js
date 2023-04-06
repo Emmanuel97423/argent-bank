@@ -6,7 +6,6 @@ export const apiSlice = createApi({
   tagTypes: ['Auth'],
   preparedHeaders: (headers, { getState }) => {
     const token = getState().auth.token;
-    console.log('token:', token);
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
     }
@@ -21,7 +20,10 @@ export const apiSlice = createApi({
       })
     }),
     fetchUser: builder.mutation({
-      query: (token) => ({})
+      query: () => ({
+        url: 'user/profile',
+        method: 'POST'
+      })
     }),
     protected: builder.mutation({
       query: () => 'protected'
@@ -29,4 +31,4 @@ export const apiSlice = createApi({
   })
 });
 
-export const { useFetchLoginMutation } = apiSlice;
+export const { useFetchLoginMutation, useFetchUserMutation } = apiSlice;
