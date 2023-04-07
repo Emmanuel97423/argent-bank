@@ -1,38 +1,67 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { setCredentials, fetchLogin } from '../../features/auth/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFetchLoginMutation } from '../../features/api/apiSlice';
-
-// import { useAppDispatch, useAppSelector } from '../../store/hooks';
-// import { useFetchAuthMutation } from '../../features/auth/auth-api-slice';
+import { remenberMe, setToken } from '../../features/auth/authSlice';
 
 export default function Signin() {
+  const [fetchLogin, { data, status, isLoading, isError }] =
+    useFetchLoginMutation();
+
   const [errorMessage, setErrorMessage] = useState('');
   const [loginData, setLoginData] = useState({
-    username: '',
-    password: ''
+    email: '',
+    password: '',
+    remenberMe: ''
   });
+
+  const isLogined = useSelector((state) => state.auth.isLogined);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLogined) {
+      navigate('/profile');
+    }
+  }, []);
+
   const loginSubmitted = async () => {
-    if (canSave) {
-      const [fetchLogin, { isLoading }] = useFetchLoginMutation();
+    try {
+      if (canSave) {
+        const response = await fetchLogin(loginData).unwrap();
+        if (response.status === 200) {
+          const token = response.body.token;
+          dispatch(setToken(token));
+          navigate('/profile');
+        }
+
+        if (loginData.remenberMe) {
+          dispatch(remenberMe(true));
+        }
+      }
+    } catch (error) {
+      console.log('error:', error);
+      const errorMessage = error.data.message;
+      setErrorMessage(errorMessage);
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 3000);
     }
   };
 
   const userNameOnChange = (e) => {
-    // setUsername(e.target.value);
-    setLoginData({ ...loginData, username: e.target.value });
+    setLoginData({ ...loginData, email: e.target.value });
   };
 
   const passwordOnChange = (e) => {
-    // setPassword(e.target.value);
     setLoginData({ ...loginData, password: e.target.value });
   };
 
-  const canSave = [loginData.username, loginData.password].every(Boolean);
+  const remenberMeOnChange = (e) => {
+    setLoginData({ ...loginData, remenberMe: e.target.checked });
+  };
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const canSave = [loginData.email, loginData.password].every(Boolean);
 
   return (
     <main className="main bg-dark">
@@ -42,14 +71,18 @@ export default function Signin() {
         <form>
           <div className="input-wrapper">
             <label htmlFor="username">Username</label>
-            <input type="text" id="username" onChange={userNameOnChange} />
+            <input type="email" id="username" onChange={userNameOnChange} />
           </div>
           <div className="input-wrapper">
             <label htmlFor="password">Password</label>
             <input type="password" id="password" onChange={passwordOnChange} />
           </div>
           <div className="input-remember">
-            <input type="checkbox" id="remember-me" />
+            <input
+              type="checkbox"
+              id="remember-me"
+              onChange={remenberMeOnChange}
+            />
             <label htmlFor="remember-me">Remember me</label>
           </div>
           {errorMessage ? <p>{errorMessage}</p> : null}

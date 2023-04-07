@@ -2,29 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { loadState, deleteState } from '../../utils/localStorage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../../features/auth/authSlice';
 
 export default function Header() {
-  const profile = useSelector((state) => state.profile);
-  // const isLoggedIn = profile.isLoggedIn;
-  // const [isLogged, setIsLogged] = useState(isLoggedIn);
-  useEffect(() => {
-    // const isLoggedLocalStorage = loadState('isLogged');
-    // if (isLoggedLocalStorage) {
-    //   setIsLogged(loadState('isLogged'));
-    // }
-  }, []);
+  const isLogined = useSelector((state) => state.auth.isLogined);
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
-    deleteState('isLogged');
-    deleteState('token');
-    deleteState('user');
-    setIsLogged(false);
+    dispatch(logout());
   };
 
-  const isLogged = true;
   const SignButton = () => {
-    return !isLogged ? (
+    return !isLogined ? (
       <Link to="/sign-in" className="main-nav-item">
         <FontAwesomeIcon icon={['fa', 'coffee']} />
         <i className="fa fa-user-circle"></i>
