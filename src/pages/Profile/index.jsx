@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useFetchUserMutation } from '../../features/api/apiSlice';
 import { setUser } from '../../features/auth/authSlice';
-import { loadState } from '../../utils/localStorage';
 
 export default function Profile() {
   const [firstName, setFirstName] = useState('');
@@ -46,6 +45,16 @@ export default function Profile() {
             <br />
             {firstName} {lastName} !
           </h1>
+          <div className="edit-wrapper">
+            <div className="input-edit-wrapper">
+              <input type="text" id="firstName" placeholder={firstName} />
+              <input type="text" id="lastname" placeholder={lastName} />
+            </div>
+            <div className="button-wrapper">
+              <button className="edit-button">Save</button>
+              <button className="edit-button">Cancel</button>
+            </div>
+          </div>
           <button className="edit-button">Edit Name</button>
         </div>
         <h2 className="sr-only">Accounts</h2>
