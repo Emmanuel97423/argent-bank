@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFetchLoginMutation } from '../../features/api/apiSlice';
-import { setToken } from '../../features/auth/authSlice';
+import { remenberMe, setToken } from '../../features/auth/authSlice';
 
 export default function Signin() {
   const [fetchLogin, { data, status, isLoading, isError }] =
@@ -11,11 +11,19 @@ export default function Signin() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loginData, setLoginData] = useState({
     email: '',
-    password: ''
+    password: '',
+    remenberMe: ''
   });
 
+  const isLogined = useSelector((state) => state.auth.isLogined);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLogined) {
+      navigate('/profile');
+    }
+  }, []);
 
   const loginSubmitted = async () => {
     try {
@@ -25,6 +33,10 @@ export default function Signin() {
           const token = response.body.token;
           dispatch(setToken(token));
           navigate('/profile');
+        }
+
+        if (loginData.remenberMe) {
+          dispatch(remenberMe(true));
         }
       }
     } catch (error) {
@@ -45,6 +57,10 @@ export default function Signin() {
     setLoginData({ ...loginData, password: e.target.value });
   };
 
+  const remenberMeOnChange = (e) => {
+    setLoginData({ ...loginData, remenberMe: e.target.checked });
+  };
+
   const canSave = [loginData.email, loginData.password].every(Boolean);
 
   return (
@@ -62,7 +78,11 @@ export default function Signin() {
             <input type="password" id="password" onChange={passwordOnChange} />
           </div>
           <div className="input-remember">
-            <input type="checkbox" id="remember-me" />
+            <input
+              type="checkbox"
+              id="remember-me"
+              onChange={remenberMeOnChange}
+            />
             <label htmlFor="remember-me">Remember me</label>
           </div>
           {errorMessage ? <p>{errorMessage}</p> : null}

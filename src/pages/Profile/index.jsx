@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useFetchUserMutation } from '../../features/api/apiSlice';
 import { setUser } from '../../features/auth/authSlice';
+import { loadState } from '../../utils/localStorage';
 
 export default function Profile() {
   const [firstName, setFirstName] = useState('');
