@@ -4,9 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFetchLoginMutation } from '../../features/api/apiSlice';
 import { remenberMe, setToken } from '../../features/auth/authSlice';
 
+/**
+ * A React component for handling user sign in.
+ * @returns {JSX.Element} A JSX element that represents the sign-in form.
+ */
 export default function Signin() {
-  const [fetchLogin, { data, status, isLoading, isError }] =
-    useFetchLoginMutation();
+  const [fetchLogin] = useFetchLoginMutation();
 
   const [errorMessage, setErrorMessage] = useState('');
   const [loginData, setLoginData] = useState({
@@ -23,8 +26,14 @@ export default function Signin() {
     if (isLogined) {
       navigate('/profile');
     }
-  }, []);
+  }, [isLogined, navigate]);
 
+  /**
+   * Handles the submission of the sign-in form.
+   * If successful, sets the authentication token and navigates to the user's profile page.
+   * If the "remember me" checkbox is checked, sets a flag in the Redux store to remember the user.
+   * If unsuccessful, displays an error message for 3 seconds.
+   */
   const loginSubmitted = async () => {
     try {
       if (canSave) {
@@ -49,14 +58,26 @@ export default function Signin() {
     }
   };
 
+  /**
+   * Updates the email field in the sign-in form when the user types in it.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
+   */
   const userNameOnChange = (e) => {
     setLoginData({ ...loginData, email: e.target.value });
   };
 
+  /**
+   * Updates the password field in the sign-in form when the user types in it.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
+   */
   const passwordOnChange = (e) => {
     setLoginData({ ...loginData, password: e.target.value });
   };
 
+  /**
+   * Updates the "remember me" checkbox in the sign-in form when the user clicks on it.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
+   */
   const remenberMeOnChange = (e) => {
     setLoginData({ ...loginData, remenberMe: e.target.checked });
   };
@@ -86,11 +107,7 @@ export default function Signin() {
             <label htmlFor="remember-me">Remember me</label>
           </div>
           {errorMessage ? <p>{errorMessage}</p> : null}
-          {/* PLACEHOLDER DUE TO STATIC SITE  */}
-          {/* <a href="./user.html" className="sign-in-button">
-            Sign In
-          </a> */}
-          {/* SHOULD BE THE BUTTON BELOW */}
+
           <button
             type="button"
             className="sign-in-button"

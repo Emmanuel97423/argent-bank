@@ -1,3 +1,7 @@
+/**
+ * Saves the specified state object to session storage.
+ * @param {Object} state - The state object to save.
+ */
 export const saveStateToSessionStorage = (state) => {
   try {
     const serializedState = JSON.stringify(state);
@@ -7,6 +11,11 @@ export const saveStateToSessionStorage = (state) => {
   }
 };
 
+/**
+ * Loads the specified state item from session storage and returns its value.
+ * @param {string} stateItem - The name of the state item to load.
+ * @returns {Object|undefined} The loaded state item, or undefined if it doesn't exist.
+ */
 export const loadStateToSessionStorage = (stateItem) => {
   try {
     const serializedState = sessionStorage.getItem(stateItem);
@@ -19,6 +28,10 @@ export const loadStateToSessionStorage = (stateItem) => {
   }
 };
 
+/**
+ * Deletes the specified storage item from session storage.
+ * @param {string} storageItem - The name of the storage item to delete.
+ */
 export const deleteStateToSessionStorage = (storageItem) => {
   try {
     sessionStorage.removeItem(storageItem);

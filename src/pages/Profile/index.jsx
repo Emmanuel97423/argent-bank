@@ -7,6 +7,10 @@ import {
 } from '../../features/api/apiSlice';
 import { setUser, updateUser } from '../../features/auth/authSlice';
 
+/**
+ * Profile component
+ * @returns {JSX.Element} Profile component
+ */
 export default function Profile() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -23,63 +27,88 @@ export default function Profile() {
   const dispatch = useDispatch();
   const [fetchUser, { data, status, isLoading, isError }] =
     useFetchUserMutation();
+
   useEffect(() => {
-    try {
-      if (token) {
-        const user = async (tokenParam) => {
-          const response = await fetchUser(tokenParam).unwrap();
+    /**
+     * Fetch user data and update state
+     */
+    const fetchUserData = async () => {
+      try {
+        if (token) {
+          const response = await fetchUser(token).unwrap();
           if (response.status === 200) {
             const user = response.body;
             dispatch(setUser(user));
             setFirstName(user.firstName);
             setLastName(user.lastName);
           }
-          return fetchUser;
-        };
-        user(token);
-      } else {
-        navigate('/sign-in');
+        } else {
+          navigate('/sign-in');
+        }
+      } catch (error) {
+        console.log('error:', error);
       }
-    } catch (error) {
-      console.log('error:', error);
-    }
+    };
+    fetchUserData();
   }, []);
 
+  /**
+   * Handle first name change event
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event
+   */
   const firstNameOnChange = (e) => {
     setEditProfileNames({ ...editProfileNames, firstName: e.target.value });
   };
+
+  /**
+   * Handle last name change event
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event
+   */
   const lastNameOnChange = (e) => {
     setEditProfileNames({ ...editProfileNames, lastName: e.target.value });
   };
 
+  /**
+   * Clear edit form
+   */
   const clearEditForm = () => {
     setEditProfileNames({ firstName: '', lastName: '' });
     setActiveForm(false);
   };
+
+  /**
+   * Check if the form can be saved
+   * @type {boolean}
+   */
   const canSave = [editProfileNames.firstName, editProfileNames.lastName].every(
     Boolean
   );
+
+  /**
+   * Handle edit profile button click
+   */
   const handleEdit = () => {
     setActiveForm(true);
   };
 
+  /**
+   * Handle form submit event
+   */
   const handleSubmit = async () => {
     try {
-      const userNames = async (userParam) => {
-        const response = await updateUserNames(userParam).unwrap();
-        if (response.status === 200) {
-          const user = response.body;
-          dispatch(updateUser(user));
-          setFirstName(user.firstName);
-          setLastName(user.lastName);
-          clearEditForm();
-        }
-      };
-      userNames(editProfileNames);
+      const response = await updateUserNames(editProfileNames).unwrap();
+      if (response.status === 200) {
+        const user = response.body;
+        dispatch(updateUser(user));
+        setFirstName(user.firstName);
+        setLastName(user.lastName);
+        clearEditForm();
+      }
     } catch (error) {
       console.log('error:', error);
     }
   };
+
   return (
     <>
       <main className="main bg-dark">

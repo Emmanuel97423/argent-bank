@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react';
+/**
+ * Represents the Header component for the Argent Bank website.
+ * @function
+ * @returns {JSX.Element} - Rendered Header component.
+ */
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { loadState, deleteState } from '../../utils/localStorage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../features/auth/authSlice';
@@ -9,10 +13,19 @@ export default function Header() {
   const isLogined = useSelector((state) => state.auth.isLogined);
   const dispatch = useDispatch();
 
+  /**
+   * Calls the logout action creator from authSlice and dispatches it to the Redux store.
+   * @function
+   */
   const handleLogout = () => {
     dispatch(logout());
   };
 
+  /**
+   * Returns a Sign In or Sign Out button depending on whether the user is logged in.
+   * @function
+   * @returns {JSX.Element} - Rendered Sign In or Sign Out button.
+   */
   const SignButton = () => {
     return !isLogined ? (
       <Link to="/sign-in" className="main-nav-item">
@@ -27,6 +40,7 @@ export default function Header() {
       </Link>
     );
   };
+
   return (
     <>
       <nav className="main-nav">
