@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useFetchUserMutation } from '../../features/api/apiSlice';
-import { setUser } from '../../features/auth/authSlice';
-import { loadState } from '../../utils/localStorage';
+import {
+  useFetchUserMutation,
+  useUpdateUserNamesMutation
+} from '../../features/api/apiSlice';
+import { setUser, updateUser } from '../../features/auth/authSlice';
 
 export default function Profile() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [editProfileNames, setEditProfileNames] = useState({
+    firstName: '',
+    lastName: ''
+  });
+  const [activeForm, setActiveForm] = useState(false);
 
   const token = useSelector((state) => state.auth.token);
+  const [updateUserNames] = useUpdateUserNamesMutation();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -37,6 +45,41 @@ export default function Profile() {
     }
   }, []);
 
+  const firstNameOnChange = (e) => {
+    setEditProfileNames({ ...editProfileNames, firstName: e.target.value });
+  };
+  const lastNameOnChange = (e) => {
+    setEditProfileNames({ ...editProfileNames, lastName: e.target.value });
+  };
+
+  const clearEditForm = () => {
+    setEditProfileNames({ firstName: '', lastName: '' });
+    setActiveForm(false);
+  };
+  const canSave = [editProfileNames.firstName, editProfileNames.lastName].every(
+    Boolean
+  );
+  const handleEdit = () => {
+    setActiveForm(true);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const userNames = async (userParam) => {
+        const response = await updateUserNames(userParam).unwrap();
+        if (response.status === 200) {
+          const user = response.body;
+          dispatch(updateUser(user));
+          setFirstName(user.firstName);
+          setLastName(user.lastName);
+          clearEditForm();
+        }
+      };
+      userNames(editProfileNames);
+    } catch (error) {
+      console.log('error:', error);
+    }
+  };
   return (
     <>
       <main className="main bg-dark">
@@ -46,7 +89,55 @@ export default function Profile() {
             <br />
             {firstName} {lastName} !
           </h1>
-          <button className="edit-button">Edit Name</button>
+          {activeForm ? (
+            <form>
+              <div className="edit-wrapper">
+                <div className="input-edit-wrapper">
+                  <div>
+                    <label htmlFor="firstName"></label>
+
+                    <input
+                      type="text"
+                      id="firstName"
+                      placeholder={firstName}
+                      onChange={firstNameOnChange}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName"></label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      placeholder={lastName}
+                      onChange={lastNameOnChange}
+                    />
+                  </div>
+                </div>
+                <div className="button-wrapper">
+                  <button
+                    type="button"
+                    className="edit-button"
+                    disabled={!canSave}
+                    onClick={handleSubmit}
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    className="edit-button"
+                    onClick={clearEditForm}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          ) : null}
+          {!activeForm ? (
+            <button className="edit-button" onClick={handleEdit}>
+              Edit Name
+            </button>
+          ) : null}
         </div>
         <h2 className="sr-only">Accounts</h2>
         <section className="account">

@@ -281,6 +281,48 @@ body {
   color: #fff;
 }
 
+.button-wrapper{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+}
+.edit-button {
+  width: 200px;
+  padding: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  border-color: #00bc77;
+  background-color: #00bc77;
+  color: #fff;
+}
+
+.edit-wrapper{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+}
+
+.input-edit-wrapper {
+  /* width: 100%; */
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+ 
+}
+
+.input-edit-wrapper label {
+  font-weight: bold;
+}
+
+.input-edit-wrapper input {
+  padding: 5px;
+  font-size: 1.2rem;
+}
+
 @media (min-width: 720px) {
   .account {
     flex-direction: row;
