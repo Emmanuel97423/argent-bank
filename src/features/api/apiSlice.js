@@ -53,13 +53,6 @@ export const apiSlice = createApi({
         method: 'PUT',
         body: body
       })
-    }),
-
-    /**
-     * Fetches a protected resource.
-     */
-    protected: builder.mutation({
-      query: () => 'protected'
     })
   })
 });
