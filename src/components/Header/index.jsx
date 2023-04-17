@@ -6,6 +6,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserCircle, faSignOut } from '@fortawesome/free-solid-svg-icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../features/auth/authSlice';
 
@@ -29,13 +30,12 @@ export default function Header() {
   const SignButton = () => {
     return !isLogined ? (
       <Link to="/sign-in" className="main-nav-item">
-        <FontAwesomeIcon icon={['fa', 'coffee']} />
-        <i className="fa fa-user-circle"></i>
+        <FontAwesomeIcon icon={faUserCircle} />
         Sign In
       </Link>
     ) : (
       <Link to="/" className="main-nav-item" onClick={handleLogout}>
-        <i className="fa fa-user-circle"></i>
+        <FontAwesomeIcon icon={faSignOut} />
         Sign out
       </Link>
     );

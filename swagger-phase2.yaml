@@ -9,7 +9,7 @@ basePath: /api/v1
 schemes:
   - http
 paths:
-  /transactions/{userId}:
+  /transactions/{userId}/{accountId}:
     get:
       tags:
         - Transaction Module
@@ -46,7 +46,7 @@ paths:
         '500':
           description: Internal Server Error
 
-  /transactions/{userId}/{transactionId}:
+  /transactions/{transactionId}:
     get:
       tags:
         - Transaction Module
@@ -58,10 +58,6 @@ paths:
         - in: header
           name: Authorization
           description: Attach Bearer JWT token
-          required: true
-        - in: path
-          name: userId
-          description: id of user's transaction
           required: true
         - in: path
           name: transactionId
@@ -88,8 +84,8 @@ paths:
         '500':
           description: Internal Server Error
 
-  /transactions/{userId}/addOneTransaction:
-    post:
+  /transactionUpdate/{transactionId}:
+    put:
       tags:
         - Transaction Module
       summary: Add new transaction
@@ -101,10 +97,6 @@ paths:
           name: Authorization
           description: Attach Bearer JWT token
           required: true
-        - in: path
-          name: userId
-          description: ID of user of new transaction
-          required: true
           schema:
             type:string
             # $ref: '#/definitions/Transaction'
@@ -115,21 +107,18 @@ paths:
           schema:
             type: object
             properties:
-              typeOfBalance:
+              category:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 1454
+                  name:
+                    type: string
+                    example: food
+              notes:
                 type: string
-                example: Current
-              typeOfTransaction:
-                type: string
-                example: Checking
-              amount:
-                type: number
-                example: 2082.79
-              currency:
-                type: string
-                example: USD
-              userId:
-                type: string
-                example: 6
+                example: my notes
 
       produces:
         - application/json
@@ -176,19 +165,52 @@ definitions:
     properties:
       id:
         type: string
-        example: '1'
+        example: '112'
+      date:
+        type: date
+        example: June 20th, 2020
+      description:
+        type: string
+        example: Golden Sun Bakery
       amount:
-        type: integer
-        example: 2082.79
-      typeOfTransaction:
-        type: string
-        example: Checking
-      typeOfBalance:
-        type: string
-        example: Current
-      userId:
-        type: string
-        example: '6'
+        type: number
+        example: 5.00
+      balance:
+        type: number
+        example: '2089.79'
+      details:
+        type: array
+        items:
+          $ref: '#/definitions/Details'
+
+  Details:
+    type: object
+    properties:
+      transactionType:
+        type: object
+        properties:
+          id:
+            type: string
+            example: 11545
+          name:
+            type: string
+            example: Electronic
+      category:
+        type: object
+        properties:
+          id:
+            type: string
+            example: 1455
+          name:
+            type: string
+            example: Food
+      notes:
+        type: object
+        properties:
+          content:
+            type: string
+            example: 'notes example'
+
   Transactions:
     type: array
     items:
